@@ -1,0 +1,2 @@
+# ??SpringBoot Starter
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.gentlewind.sdk.ApiClientSdkConfig

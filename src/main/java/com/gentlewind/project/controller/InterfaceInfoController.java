@@ -3,10 +3,7 @@ package com.gentlewind.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gentlewind.project.annotation.AuthCheck;
-import com.gentlewind.project.common.BaseResponse;
-import com.gentlewind.project.common.DeleteRequest;
-import com.gentlewind.project.common.ErrorCode;
-import com.gentlewind.project.common.ResultUtils;
+import com.gentlewind.project.common.*;
 import com.gentlewind.project.constant.CommonConstant;
 import com.gentlewind.project.exception.BusinessException;
 import com.gentlewind.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
@@ -14,9 +11,12 @@ import com.gentlewind.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.gentlewind.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.gentlewind.project.model.entity.InterfaceInfo;
 import com.gentlewind.project.model.entity.User;
+import com.gentlewind.project.model.enums.InterfaceInfoStatusEnum;
 import com.gentlewind.project.service.InterfaceInfoService;
 import com.gentlewind.project.service.UserService;
+import com.gentlewind.sdk.client.ApiClient;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 帖子接口
+ * 接口管理
  *
  * @author gentlewind
  */
@@ -40,6 +40,9 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private ApiClient apiClient;
 
     // region 增删改查
 
@@ -195,5 +198,77 @@ public class InterfaceInfoController {
     }
 
     // endregion
+
+
+    /**
+     * 发布接口
+     *
+     * @param
+     * @return
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = "admin") //权限校验切面注解
+    // HttpServletRequest：客户端的 HTTP 请求,通过它可以获取请求的各种信息，包括请求头、请求参数、请求体等，以便在服务器端进行处理
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,HttpServletRequest request) {
+        if(idRequest == null || idRequest.getId() <= 0 ){ //  如果id为null或小于等于0
+            throw new BusinessException(ErrorCode.PARAMS_ERROR); // 抛出业务异常，表示请求参数错误
+        }
+
+        // 1. 校验接口是否存在
+        long id = idRequest.getId(); // 获取idRequest对象的id
+        InterfaceInfo interfaceInfo  = interfaceInfoService.getById(id); // 根据id查询接口信息的数据
+        if(interfaceInfo == null ){ // 如果查询结果为空
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR); // 抛出业务异常，表示未找到数据
+        }
+
+        // 2. 判断接口是否可调用
+        com.gentlewind.sdk.model.User user = new com.gentlewind.sdk.model.User(); // 创建一个User对象（模拟一个用户）
+        user.setUsername("test"); // 设置User对象的username属性为test
+        String username = ApiClient.getUserNameByPost(user); // 通过getUserNameByPost方法传入user的username属性
+        if(StringUtils.isBlank(username)){  // 如果username为空或空白字符串
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"接口验证失败"); // 抛出系统错误的业务异常，表示系统内部异常，并附带错误信息"接口验证失败"
+        }
+
+        // 3. 操作数据库
+        InterfaceInfo interfaceInfo1 = new InterfaceInfo();
+        interfaceInfo1.setId(id);
+        interfaceInfo1.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue()); // 修改接口数据库中的状态字段为上线
+        boolean result = interfaceInfoService.updateById(interfaceInfo1); // 调用interfaceInfoService的updateById方法，传入interfaceInfo对象，并将返回的结果赋值给result变量
+        return ResultUtils.success(result); // 返回一个成功的响应，响应体中携带result值
+
+    }
+    /**
+     * 下线接口
+     *
+     * @param
+     * @return
+     */
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,HttpServletRequest request) {
+        // 1. 校验接口是否存在
+        long id = idRequest.getId(); // 获取idRequest对象的id
+        InterfaceInfo interfaceInfo  = interfaceInfoService.getById(id); // 根据id查询接口信息的数据
+        if(interfaceInfo == null ){ // 如果查询结果为空
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR); // 抛出业务异常，表示未找到数据
+        }
+
+        // 2. 判断接口是否可调用
+        com.gentlewind.sdk.model.User user = new com.gentlewind.sdk.model.User(); // 创建一个User对象（模拟一个用户）
+        user.setUsername("test"); // 设置User对象的username属性为test
+        String username = ApiClient.getUserNameByPost(user); // 通过getUserNameByPost方法传入user的username属性
+        if(StringUtils.isBlank(username)){  // 如果username为空或空白字符串
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"接口验证失败"); // 抛出系统错误的业务异常，表示系统内部异常，并附带错误信息"接口验证失败"
+        }
+
+        // 3. 操作数据库
+        InterfaceInfo interfaceInfo1 = new InterfaceInfo();
+        interfaceInfo1.setId(id);
+        interfaceInfo1.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue()); // 修改接口数据库中的状态字段为上线
+        boolean result = interfaceInfoService.updateById(interfaceInfo1); // 调用interfaceInfoService的updateById方法，传入interfaceInfo对象，并将返回的结果赋值给result变量
+        return ResultUtils.success(result); // 返回一个成功的响应，响应体中携带result值
+
+    }
+
 
 }
