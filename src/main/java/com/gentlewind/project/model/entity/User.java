@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @TableName(value = "user")
 @Data
-public class  User implements Serializable {
+public class User implements Serializable {
     /**
      * id
      */
@@ -49,6 +49,16 @@ public class  User implements Serializable {
      * 密码
      */
     private String userPassword;
+
+    /**
+     * 公钥
+     */
+    private String accessKey;
+
+    /**
+     * 秘钥
+     */
+    private String secretKey;
 
     /**
      * 创建时间

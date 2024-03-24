@@ -51,6 +51,8 @@ create table if not exists api_db.`interface_info`
     `method`         varchar(256)                       not null comment '请求类型',
     `description`    varchar(512)                       null comment '描述',
     `status`         int      default 0                 not null comment '接口状态{0-关闭，1-开启）',
+    'url'            varchar(512)                       not null comment '接口地址',
+    'requestParams'  text                               not null comment '请求参数',
     `requestHeader`  text                               null comment '请求头',
     `update_time`    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     `responseHeader` text                               null comment '响应头',

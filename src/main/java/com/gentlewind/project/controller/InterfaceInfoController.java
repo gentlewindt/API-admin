@@ -7,6 +7,7 @@ import com.gentlewind.project.common.*;
 import com.gentlewind.project.constant.CommonConstant;
 import com.gentlewind.project.exception.BusinessException;
 import com.gentlewind.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.gentlewind.project.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.gentlewind.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.gentlewind.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.gentlewind.project.model.entity.InterfaceInfo;
@@ -15,6 +16,7 @@ import com.gentlewind.project.model.enums.InterfaceInfoStatusEnum;
 import com.gentlewind.project.service.InterfaceInfoService;
 import com.gentlewind.project.service.UserService;
 import com.gentlewind.sdk.client.ApiClient;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.apache.commons.lang3.StringUtils;
@@ -271,4 +273,47 @@ public class InterfaceInfoController {
     }
 
 
+
+    /**
+     * 测试调用
+     *
+     * @param
+     * @return
+     */
+    @PostMapping("/invoke")
+    // 以为不确定返回信息，返回一个对象好了
+    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest, HttpServletRequest request) {
+        if(interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <=0 ){ // 如果查询结果为空
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR); // 抛出业务异常，表示未找到数据
+        }
+
+        // 获取数据
+        long id = interfaceInfoInvokeRequest.getId();
+        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+
+        // 判断接口是否存在
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        if(interfaceInfo == null ){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+
+        if(interfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"接口已关闭");
+        }
+
+        // 获取当前登录用户的ak和sk，这样相当于用户自己的这个身份去调用，
+        // 也不会担心它刷接口，因为知道是谁刷了这个接口，会比较安全
+        User loginUser = userService.getLoginUser(request);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        // 我们只需要进行测试调用，所以我们需要解析传递过来的参数。
+        Gson gson = new Gson();
+        //使用Gson的方法将请求参数转换为User对象
+        com.gentlewind.sdk.model.User user = gson.fromJson(userRequestParams,com.gentlewind.sdk.model.User.class);
+        // 传入User对象获取用户名称
+        String usernameByPost = ApiClient.getUserNameByPost(user);
+        // 返回成功响应，包含调用的结果
+        return ResultUtils.success(usernameByPost);
+
+    }
 }
