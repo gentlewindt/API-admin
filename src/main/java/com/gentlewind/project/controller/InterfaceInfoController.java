@@ -275,7 +275,7 @@ public class InterfaceInfoController {
 
 
     /**
-     * 测试调用
+     * 测试调用接口
      *
      * @param
      * @return

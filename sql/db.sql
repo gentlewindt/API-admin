@@ -61,6 +61,22 @@ create table if not exists api_db.`interface_info`
     `userId`         varchar(256)                       not null comment '用户名'
 ) comment '接口信息表';
 
+
+create table if not exists api_db.`user_interface_info`
+(
+    `id`              bigint                             not null auto_increment comment '主键' primary key,
+    `interfaceInfoId` bigint                             not null comment '接口id',
+    `userId`          bigint                             not null comment '调用用户id',
+    `totalNum`        int      default 0                 null comment '调用总次数',
+    `leftNum`         int      default 0                 not null comment '剩余调用次数',
+    `status`          int      default 0                 not null comment '0-正常，1-禁用',
+    `update_time`     datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    `create_time`     datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    `is_deleted`      tinyint  default 0                 not null comment '是否删除(0-未删, 1-已删)'
+) comment '用户调用接口关系表';
+
+
+
 insert into api_db.`interface_info` (`name`, `method`, `status`, `requestHeader`, `responseHeader`, `userId`)
 values ('Sh6', 'ju', 0, '1Es', '87RbT', '苏浩');
 insert into api_db.`interface_info` (`name`, `method`, `status`, `requestHeader`, `responseHeader`, `userId`)
