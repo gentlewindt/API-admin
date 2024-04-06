@@ -22,6 +22,7 @@ public @interface AuthCheck { // @interface表示这是一个注解的接口
      * @return
      */
     // 注解元素anyRole，接收一个String数组类型的参数，默认值为空数组
+    // 只要有数组中角色的任意一个，就通过权限，因此是数组
     String[] anyRole() default "";
 
     /**
@@ -30,6 +31,7 @@ public @interface AuthCheck { // @interface表示这是一个注解的接口
      * @return
      */
     // 注解元素mustRole，接收一个String类型的参数，默认值为空字符串
+    // 必须拥有某个角色，权限才通过，因此是字符串
     String mustRole() default "";
 
 }

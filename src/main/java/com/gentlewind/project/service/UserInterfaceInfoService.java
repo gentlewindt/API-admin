@@ -1,6 +1,4 @@
 package com.gentlewind.project.service;
-
-
 import com.gentlewind.project.model.entity.UserInterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,6 +8,21 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2024-03-24 21:47:29
 */
 public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
+
+    /**
+     * 验证
+     * @param userInterfaceInfo
+     * @param add
+     */
     void validUserInterfaceInfo(UserInterfaceInfo userInterfaceInfo, boolean add) ;
+
+    /**
+     * 调用接口统计
+     * @param interfaceInfoId
+     * @param userId
+     * @return
+     */
+    boolean invokeCount(long interfaceInfoId, long userId);
+
 
 }

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/name")  // 用于指定处理请求的的根路径为/name，该控制器下的所有请求都会以/name开头
 public class NameController {
 
-    @GetMapping("/") // 路径为根路径/name/，请求方式为GET
+    @GetMapping("/get") // 路径为根路径/name/，请求方式为GET
     public String getNameByGet(String name) {
         return "Get hello" + name;
     }
@@ -56,6 +56,7 @@ public class NameController {
         }
 
         // 如果权限校验通过，返回"POST 用户名是"+ 用户名
-        return "POST 用户名是" + username.getUsername();
+        String result = "POST 用户名是" + username.getUsername();
+        return result;
     }
 }

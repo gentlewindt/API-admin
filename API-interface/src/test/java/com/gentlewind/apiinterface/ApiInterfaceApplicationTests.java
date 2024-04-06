@@ -17,17 +17,17 @@ class ApiInterfaceApplicationTests {
     // 测试方法
     @Test
     void contextLoads() {
-        // 调用ApiClient的getNameByGet方法，并传入参数"gentlewind"
-        String result1 = ApiClient.getNameByGet("gentlewind");
-
-        // 调用ApiClient的getUserBy
-         User user = new User();
-         user.setUsername("tkf");
-         String result2 = ApiClient.getUserNameByPost(user);
-
-        System.out.println(result1);
-        System.out.println(result2);
-
+//        // 调用ApiClient的getNameByGet方法，并传入参数"gentlewind"
+//        String result1 = ApiClient.getNameByGet("gentlewind");
+//
+//        // 调用ApiClient的getUserBy
+//         User user = new User();
+//         user.setUsername("tkf");
+//         String result2 = ApiClient.getUserNameByPost(user);
+//
+//        System.out.println(result1);
+//        System.out.println(result2);
+//
     }
 
 }

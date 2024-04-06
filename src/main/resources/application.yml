@@ -45,3 +45,16 @@ api:
   client:
     secret-key: gentlewind
     access-key: asdfqwer
+
+# 配置应用的名称，使用协议，注册中心类型（这里使用nacos）和地址
+dubbo:
+  application:
+    # 设置应用的名称
+    name: dubbo-springboot-demo-provider
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    # 配置注册中心为nacos，地址为nacos://localhost:8848
+    id: nacos-registry
+    address: nacos://localhost:8848
