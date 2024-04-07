@@ -53,7 +53,7 @@ dubbo:
     name: dubbo-springboot-demo-provider
   protocol:
     name: dubbo
-    port: -1
+    port: 22221
   registry:
     # 配置注册中心为nacos，地址为nacos://localhost:8848
     id: nacos-registry

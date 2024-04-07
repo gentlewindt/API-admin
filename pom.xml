@@ -112,6 +112,14 @@
             <version>2.1.0</version>
         </dependency>
 
+        <!--引入公共服务包-->
+        <dependency>
+            <groupId>com.gentlewind</groupId>
+            <artifactId>API-common</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

@@ -151,7 +151,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                                 String data = new String(content, StandardCharsets.UTF_8);//data
                                 sb2.append(data);
                                 // 打印日志
-                                log.info("响应结果：" + data)
+                                log.info("响应结果：" + data);
                                 // 将处理后的内容重新包装成DataBuffer并返回
                                 return bufferFactory.wrap(content);
                             }));
