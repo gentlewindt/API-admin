@@ -2,6 +2,7 @@ package com.gentlewind.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.gentlewind.apicommon.model.entity.User;
 import com.gentlewind.project.annotation.AuthCheck;
 import com.gentlewind.project.common.BaseResponse;
 import com.gentlewind.project.common.DeleteRequest;
@@ -13,7 +14,6 @@ import com.gentlewind.project.model.dto.post.PostAddRequest;
 import com.gentlewind.project.model.dto.post.PostQueryRequest;
 import com.gentlewind.project.model.dto.post.PostUpdateRequest;
 import com.gentlewind.project.model.entity.Post;
-import com.gentlewind.project.model.entity.User;
 import com.gentlewind.project.service.PostService;
 import com.gentlewind.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;

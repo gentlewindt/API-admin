@@ -1,11 +1,11 @@
 package com.gentlewind.project.aop;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.gentlewind.apicommon.model.entity.User;
 import com.gentlewind.project.service.UserService;
 import com.gentlewind.project.annotation.AuthCheck;
 import com.gentlewind.project.common.ErrorCode;
 import com.gentlewind.project.exception.BusinessException;
-import com.gentlewind.project.model.entity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

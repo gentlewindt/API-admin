@@ -2,6 +2,8 @@ package com.gentlewind.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.gentlewind.apicommon.model.entity.User;
+import com.gentlewind.apicommon.model.entity.UserInterfaceInfo;
 import com.gentlewind.project.annotation.AuthCheck;
 import com.gentlewind.project.common.*;
 import com.gentlewind.project.constant.CommonConstant;
@@ -10,8 +12,6 @@ import com.gentlewind.project.exception.BusinessException;
 import com.gentlewind.project.model.dto.userinterfaceinfo.UserInterfaceInfoAddRequest;
 import com.gentlewind.project.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
 import com.gentlewind.project.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
-import com.gentlewind.project.model.entity.UserInterfaceInfo;
-import com.gentlewind.project.model.entity.User;
 import com.gentlewind.project.service.UserInterfaceInfoService;
 import com.gentlewind.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;

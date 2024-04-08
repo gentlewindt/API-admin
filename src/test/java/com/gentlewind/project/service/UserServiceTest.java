@@ -1,6 +1,6 @@
 package com.gentlewind.project.service;
 
-import com.gentlewind.project.model.entity.User;
+import com.gentlewind.apicommon.model.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

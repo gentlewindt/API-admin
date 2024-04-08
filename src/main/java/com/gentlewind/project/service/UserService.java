@@ -2,7 +2,7 @@ package com.gentlewind.project.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.gentlewind.project.model.entity.User;
+import com.gentlewind.apicommon.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 

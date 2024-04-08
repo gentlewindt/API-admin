@@ -2,19 +2,15 @@ package com.gentlewind.project.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gentlewind.apicommon.model.entity.UserInterfaceInfo;
 import com.gentlewind.project.common.ErrorCode;
 import com.gentlewind.project.exception.BusinessException;
-import com.gentlewind.project.model.entity.InterfaceInfo;
-import com.gentlewind.project.model.entity.UserInterfaceInfo;
 import com.gentlewind.project.service.UserInterfaceInfoService;
 import com.gentlewind.project.mapper.UserInterfaceInfoMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 /**
-* @author 22939
+* @author gentlewind
 * @description 针对表【user_interface_info(用户调用接口关系表)】的数据库操作Service实现
 * @createDate 2024-03-24 21:47:29
 */

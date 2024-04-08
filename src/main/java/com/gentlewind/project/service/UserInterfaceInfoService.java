@@ -1,6 +1,6 @@
 package com.gentlewind.project.service;
-import com.gentlewind.project.model.entity.UserInterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gentlewind.apicommon.model.entity.UserInterfaceInfo;
 
 /**
 * @author gentlewind

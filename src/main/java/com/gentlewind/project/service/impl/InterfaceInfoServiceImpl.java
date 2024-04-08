@@ -2,10 +2,11 @@ package com.gentlewind.project.service.impl;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import com.gentlewind.apicommon.model.entity.InterfaceInfo;
 import com.gentlewind.project.common.ErrorCode;
 import com.gentlewind.project.exception.BusinessException;
 import com.gentlewind.project.mapper.InterfaceInfoMapper;
-import com.gentlewind.project.model.entity.InterfaceInfo;
 import com.gentlewind.project.service.InterfaceInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
