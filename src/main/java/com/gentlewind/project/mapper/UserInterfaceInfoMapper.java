@@ -3,6 +3,8 @@ package com.gentlewind.project.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gentlewind.apicommon.model.entity.UserInterfaceInfo;
 
+import java.util.List;
+
 /**
 * @author gentlewind
 * @description 针对表【user_interface_info(用户调用接口关系表)】的数据库操作Mapper
@@ -10,6 +12,8 @@ import com.gentlewind.apicommon.model.entity.UserInterfaceInfo;
 * @Entity com.gentlewind.project.model.entity.UserInterfaceInfo
 */
 public interface UserInterfaceInfoMapper extends BaseMapper<UserInterfaceInfo> {
+
+    List<UserInterfaceInfo> listTopInvokeInterfaceInfo(int limit);
 
 }
 
