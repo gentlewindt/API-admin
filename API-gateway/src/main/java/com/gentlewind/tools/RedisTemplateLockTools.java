@@ -20,7 +20,6 @@ public class RedisTemplateLockTools {
      */
     public static boolean lock(StringRedisTemplate stringRedisTemplate, String key, String value, long expireTime) {
         return stringRedisTemplate.opsForValue().setIfAbsent(key, value, expireTime, TimeUnit.MILLISECONDS);
-
     }
     /**
      * 解锁

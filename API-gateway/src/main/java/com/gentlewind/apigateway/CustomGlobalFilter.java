@@ -2,6 +2,7 @@ package com.gentlewind.apigateway;
 
 import com.gentlewind.sdk.utils.SignUtils;
 import com.gentlewind.tools.RedisTemplateLockTools;
+import com.gentlewind.tools.RedissonRateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -38,6 +39,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     @Resource
     private RedisTemplateLockTools redisTemplateLockTools;
 
+    @Resource
+    private RedissonRateLimiter redissonRateLimiter;
+
     // 白名单，只允许特定的调用（更安全）
     private static final List<String> IP_WHITE_IP = Arrays.asList("127.0.0.1");
 
@@ -54,8 +58,19 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         log.info("请求来源路径：" + sourceAddress);
         log.info("请求来源路径：" + request.getRemoteAddress());
 
+        /**
+         * 3. 接口防刷
+         *
+         * 3.1 限流
+         * 3.2 黑白名单
+         * 3.3 用户鉴权
+         */
 
-//        3. （黑白名单）
+        // 3.1 限流
+        redissonRateLimiter.doRateLimit(request.getId());
+
+
+        // 3.3 （黑白名单）
         // 1) 首先在上面写一个全局常量，使用白名单。通常建议在权限管理中尽量使用白名单，少用黑名单。
         // 2) 如果白名单不包含指定地址，则拒绝该请求
         // 通过exchange获取响应对象，从而控制该响应，直接设置状态码为403（禁止访问），拦截该响应
@@ -67,7 +82,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         }
 
 
-//        4. 用户鉴权（判断 ak、sk 是否合法）
+        // 3.3 用户鉴权（判断 ak、sk 是否合法）
 
         // 从请求头中获取参数
         HttpHeaders headers = request.getHeaders();
