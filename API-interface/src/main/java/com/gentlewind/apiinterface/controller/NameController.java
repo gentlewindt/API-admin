@@ -1,7 +1,7 @@
 package com.gentlewind.apiinterface.controller;
+
 // SDK
 import com.gentlewind.sdk.model.User;
-import com.gentlewind.sdk.utils.SignUtils;
 
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
@@ -30,33 +30,34 @@ public class NameController {
 
     @PostMapping("/user")
     public String getNameByPost(@RequestBody User username, HttpServletRequest request) { // 通过@RequestBody注解获取请求体中的参数
-        // 从请求头中获取参数
-        String accessKey = request.getHeader("accessKey");
-        String nonce = request.getHeader("nonce");
-        String sign = request.getHeader("sign");
-        String timestamp = request.getHeader("timestamp");
-        String body = request.getHeader("body");
-
-        // todo : 去数据库查询是否已分配给用户
-        if (!accessKey.equals("gentlewind")) {
-            throw new RuntimeException("无权限访问");
-        }
-        // 校验一下随机数，直接判断一下nonce是否大于10000
-        if (Long.parseLong(nonce) > 10000) { // 将字符串转换为long类型
-            throw new RuntimeException("无权限访问");
-        }
-        //todo : 时间和当前时间不能超过5分钟
-        //if (timestamp) {}
-
-        //todo 实际情况中是从数据库中查出 secretKey
-        String serverSign = SignUtils.genSign(body,"asdfqwer");
-        // 如果生成的签名不一致，则抛出异常，并提示"无权限"
-        if(!serverSign.equals(sign)) {
-            throw new RuntimeException("无权限访问");
-        }
-
-        // 如果权限校验通过，返回"POST 用户名是"+ 用户名
-        String result = "POST 用户名是" + username.getUsername();
-        return result;
+//        // 从请求头中获取参数
+//        String accessKey = request.getHeader("accessKey");
+//        String nonce = request.getHeader("nonce");
+//        String sign = request.getHeader("sign");
+//        String timestamp = request.getHeader("timestamp");
+//        String body = request.getHeader("body");
+//
+//        // todo : 去数据库查询是否已分配给用户
+//        if (!accessKey.equals("gentlewind")) {
+//            throw new RuntimeException("无权限访问");
+//        }
+//        // 校验一下随机数，直接判断一下nonce是否大于10000
+//        if (Long.parseLong(nonce) > 10000) { // 将字符串转换为long类型
+//            throw new RuntimeException("无权限访问");
+//        }
+//        //todo : 时间和当前时间不能超过5分钟
+//        //if (timestamp) {}
+//
+//        //todo 实际情况中是从数据库中查出 secretKey
+//        String serverSign = SignUtils.genSign(body,"asdfqwer");
+//        // 如果生成的签名不一致，则抛出异常，并提示"无权限"
+//        if(!serverSign.equals(sign)) {
+//            throw new RuntimeException("无权限访问");
+//        }
+//
+//        // 如果权限校验通过，返回"POST 用户名是"+ 用户名
+//        String result = "POST 用户名是" + username.getUsername();
+//        return result;
+        return "";
     }
 }

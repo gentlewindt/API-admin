@@ -1,6 +1,7 @@
 package com.gentlewind.apigateway;
 
 import com.gentlewind.sdk.utils.SignUtils;
+import com.gentlewind.tools.RedisTemplateLockTools;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -9,17 +10,18 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +30,13 @@ import java.util.List;
 @Slf4j
 @Component
 public class CustomGlobalFilter implements GlobalFilter, Ordered {
+
+    //    引入StringRedisTemplate，用于操作Redis
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedisTemplateLockTools redisTemplateLockTools;
 
     // 白名单，只允许特定的调用（更安全）
     private static final List<String> IP_WHITE_IP = Arrays.asList("127.0.0.1");
@@ -70,24 +79,33 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
         // todo : 去数据库查询是否已分配给用户
         if (!accessKey.equals("gentlewind")) {
-             return handleNoAuth(response);
+            return handleNoAuth(response);
         }
         // 校验一下随机数，直接判断一下nonce是否大于10000
         if (Long.parseLong(nonce) > 10000) { // 将字符串转换为long类型
             return handleNoAuth(response);
         }
         // 请求的时间间隔不能超过5分钟
-        Long currentTime = System.currentTimeMillis()/1000;
+        Long currentTime = System.currentTimeMillis() / 1000;
         Long formerTime = Long.parseLong(timestamp);
         Long FIVE_MINUTES = 60 * 5L;
-        if(currentTime-formerTime >= FIVE_MINUTES ){
+        if (currentTime - formerTime >= FIVE_MINUTES) {
             return handleNoAuth(response);
         }
+
 
         //todo 实际情况中是从数据库中查出 secretKey
         String serverSign = SignUtils.genSign(body, "asdfqwer");
         // 如果生成的签名不一致，则抛出异常，并提示"无权限"
         if (!serverSign.equals(sign)) {
+            return handleNoAuth(response);
+        }
+
+//        5.防止重复提交，获取锁
+//        使用nonce作为key，因为nonce设计的初衷就是具备唯一性，以此保证通行的安全性。
+        boolean success = redisTemplateLockTools.lock(stringRedisTemplate, nonce, accessKey, 100000);
+        if (!success) {
+            log.error("重复请求，拒绝访问");
             return handleNoAuth(response);
         }
 
@@ -97,9 +115,14 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 //        6. 请求转发，调用模拟接口
         Mono<Void> filter = chain.filter(exchange);
 
+
+//       释放锁
+        redisTemplateLockTools.unlock(stringRedisTemplate, nonce, accessKey);
+
+
 //        7. 响应日志
         // 调用成功后输入一个响应日志
-        return handelResponse(exchange,chain);
+        return handelResponse(exchange, chain);
 
 
     }
@@ -112,7 +135,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
      * @param chain
      * @return
      */
-    public Mono<Void> handelResponse(ServerWebExchange exchange, GatewayFilterChain chain ) {
+    public Mono<Void> handelResponse(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
             // 获取原始的响应对象
             ServerHttpResponse originalResponse = exchange.getResponse();
@@ -121,7 +144,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             // 获取响应的状态码
             HttpStatus statusCode = originalResponse.getStatusCode();
             // 判断状态码200 OK
-            if(statusCode == HttpStatus.OK){
+            if (statusCode == HttpStatus.OK) {
                 // 创建一个装饰后的响应对象（开始增强能力）
                 ServerHttpResponseDecorator decoratedResponse = new ServerHttpResponseDecorator(originalResponse) {
 
@@ -167,7 +190,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             }
             // 对于非200 OK的请求，直接返回，进行降级处理
             return chain.filter(exchange);//降级处理返回数据
-        }catch (Exception e){
+        } catch (Exception e) {
             // 处理异常情况，记录错误日志
             log.error("网关处理响应异常" + e);
             return chain.filter(exchange);
@@ -189,7 +212,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     }
 
     // 如果调用失败，则返回一个500（调用失败）
-    public Mono<Void> handlInvokeError(ServerHttpResponse response){
+    public Mono<Void> handlInvokeError(ServerHttpResponse response) {
         response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
         return response.setComplete();
     }
